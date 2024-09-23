@@ -43,6 +43,7 @@ class DaprHttpClient:
         timeout: Optional[int] = 60,
         headers_callback: Optional[Callable[[], Dict[str, str]]] = None,
         retry_policy: Optional[RetryPolicy] = None,
+        wait_until_ready: bool = True,
     ):
         """Invokes Dapr over HTTP.
 
@@ -50,9 +51,11 @@ class DaprHttpClient:
             message_serializer (Serializer): Dapr serializer.
             timeout (int, optional): Timeout in seconds, defaults to 60.
             headers_callback (lambda: Dict[str, str]], optional): Generates header for each request.
+            wait_until_ready (bool, optional): Set this to false in order to 
+                start the dapr client without waiting for sidecar to be ready.
         """
-        DaprHealth.wait_until_ready()
-
+        if wait_until_ready:
+            DaprHealth.wait_until_ready()
         self._timeout = aiohttp.ClientTimeout(total=timeout)
         self._serializer = message_serializer
         self._headers_callback = headers_callback

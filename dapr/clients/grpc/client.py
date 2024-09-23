@@ -123,6 +123,7 @@ class DaprGrpcClient:
         ] = None,
         max_grpc_message_length: Optional[int] = None,
         retry_policy: Optional[RetryPolicy] = None,
+        wait_until_ready: bool = True,
     ):
         """Connects to Dapr Runtime and initializes gRPC client stub.
 
@@ -135,8 +136,11 @@ class DaprGrpcClient:
             max_grpc_message_length (int, optional): The maximum grpc send and receive
                 message length in bytes.
             retry_policy (RetryPolicy optional): Specifies retry behaviour
+            wait_until_ready (bool, optional): Set this to false in order to 
+                start the dapr client without waiting for sidecar to be ready.
         """
-        DaprHealth.wait_until_ready()
+        if wait_until_ready:
+            DaprHealth.wait_until_ready()
         self.retry_policy = retry_policy or RetryPolicy()
 
         useragent = f'dapr-sdk-python/{__version__}'
